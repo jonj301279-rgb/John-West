@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Religion — Minha Rotina</title>
+<style>
+:root{
+  --bg:#07101c; --panel:#0d1828; --panel2:#111f33; --line:#21324a;
+  --text:#f5f7fb; --muted:#91a0b7; --accent:#8067ff; --green:#42d98b;
+}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 50% 0%,#162747 0,#07101c 42%,#050b13 100%);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;min-height:100vh}
+button{font:inherit}
+.app{display:grid;grid-template-columns:230px 1fr;min-height:100vh}
+.sidebar{border-right:1px solid var(--line);padding:24px 16px;background:rgba(5,12,22,.75);backdrop-filter:blur(12px)}
+.logo{display:flex;align-items:center;gap:11px;padding:4px 10px 28px}
+.logo-mark{font-size:30px}.logo h1{font-size:22px;margin:0}.logo small{color:var(--muted)}
+.nav{display:flex;flex-direction:column;gap:6px}.nav button{border:0;background:transparent;color:#aeb8ca;text-align:left;padding:12px;border-radius:10px;cursor:pointer}.nav button.active,.nav button:hover{background:#182646;color:#fff}
+.activity-title{font-size:12px;text-transform:uppercase;letter-spacing:1.2px;color:#66758d;margin:30px 10px 10px}
+.activity{display:flex;align-items:center;gap:10px;width:100%;border:1px solid transparent;background:transparent;color:#dce3ef;padding:9px 10px;border-radius:10px;text-align:left;cursor:pointer}
+.activity:hover{background:#122037}.activity.selected{background:#1a2745;border-color:var(--c);box-shadow:0 0 0 1px color-mix(in srgb,var(--c) 30%,transparent)}
+.dot{width:10px;height:10px;border-radius:50%;background:var(--c);box-shadow:0 0 12px var(--c)}
+.main{padding:26px 32px;max-width:1250px;width:100%;margin:auto}
+.top{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:24px}
+.hello{display:flex;gap:13px;align-items:center}.sun{font-size:30px}.hello h2{margin:0;font-size:20px}.hello p{margin:3px 0;color:var(--muted)}
+.actions{display:flex;gap:10px}.btn{border:1px solid var(--line);background:#121f34;color:#fff;padding:10px 15px;border-radius:9px;cursor:pointer}.btn.primary{background:linear-gradient(135deg,#6d5af6,#8b67ff);border-color:#907eff;box-shadow:0 7px 25px #6d5af633}.btn:hover{filter:brightness(1.12)}
+.hero{display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:18px}.hero h3{font-size:28px;margin:0 0 5px}.hero p{color:var(--muted);margin:0}.total{border:1px solid var(--line);background:#0d1828;padding:12px 18px;border-radius:12px;text-align:center}.total strong{display:block;font-size:18px}.total span{font-size:12px;color:var(--muted)}
+.card{background:linear-gradient(180deg,#0e1929,#0b1523);border:1px solid var(--line);border-radius:14px;box-shadow:0 18px 50px #0003}
+.tip{display:flex;align-items:center;gap:13px;padding:14px 17px;margin-bottom:18px}.tip-icon{font-size:24px}.tip strong{display:block}.tip span{font-size:13px;color:var(--muted)}
+.selected-info{padding:14px 17px;margin-bottom:18px;display:flex;justify-content:space-between;align-items:center;gap:12px}.selected-info .big{font-weight:700}.selected-info .hint{font-size:13px;color:var(--muted)}
+.hours{padding:18px}
+.hour-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.hour{min-height:92px;border:1px solid #20314a;background:#0b1625;border-radius:12px;padding:12px;cursor:pointer;transition:.18s;position:relative;overflow:hidden}
+.hour:hover{transform:translateY(-2px);border-color:#52688b}.hour.empty{color:#607087}.hour.filled{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,#0b1625),#0b1625);border-color:color-mix(in srgb,var(--c) 55%,#20314a)}
+.hour-time{font-size:12px;color:#78879c;font-weight:700}.hour-name{margin-top:12px;font-weight:700}.hour-icon{font-size:20px;position:absolute;right:11px;top:30px}.hour-xp{position:absolute;bottom:8px;right:10px;font-size:10px;color:var(--c);font-weight:700}
+.progress-wrap{padding:18px;margin-top:18px}.progress-head{display:flex;justify-content:space-between;margin-bottom:10px}.progress-head span{color:var(--muted);font-size:13px}.bar{height:10px;background:#18263a;border-radius:99px;overflow:hidden}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,#6d5af6,#45d99a);border-radius:99px;transition:.35s}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.productivity-card{padding:18px;margin-top:12px}
+.productivity-head{display:flex;justify-content:space-between;align-items:center;gap:15px;margin-bottom:12px}
+.productivity-label{display:block;color:var(--muted);font-size:11px;letter-spacing:1px;font-weight:800}
+.productivity-head strong{display:block;font-size:20px;margin-top:4px}
+.productivity-head>span{font-size:18px;font-weight:800;color:var(--green)}
+.productivity-card small{display:block;color:var(--muted);font-size:11px;margin-top:10px;line-height:1.5}.stat{padding:15px}.stat span{font-size:12px;color:var(--muted)}.stat strong{display:block;font-size:21px;margin-top:5px}
+.toast{position:fixed;right:22px;bottom:22px;background:#17263b;border:1px solid #354a68;padding:13px 16px;border-radius:10px;box-shadow:0 15px 40px #0008;transform:translateY(130px);opacity:0;transition:.3s}.toast.show{transform:none;opacity:1}
+
+.clock-card{padding:32px;display:flex;gap:34px;align-items:center;justify-content:center;min-height:520px}
+.clock-area{display:flex;flex-direction:column;align-items:center;gap:18px}
+.clock{width:min(590px,82vw);height:min(590px,82vw);border-radius:50%;position:relative;background:#091321;border:2px solid #35496b;box-shadow:0 0 0 12px #0b1728,0 0 70px #6d5af633,inset 0 0 60px #0008;cursor:pointer;user-select:none}
+.clock-face{position:absolute;inset:12px;border-radius:50%;z-index:3}
+.clock-segment{position:absolute;left:50%;top:50%;width:50%;height:2px;transform-origin:0 50%;pointer-events:none}
+.clock-segment .seg-label{position:absolute;left:calc(100% - 20px);top:-13px;width:40px;text-align:center;font-size:13px;font-weight:800;color:#dce4f2;text-shadow:0 1px 4px #000;pointer-events:none}
+.clock-hour-dot{position:absolute;left:50%;top:50%;width:7px;height:7px;border-radius:50%;background:#6c7b91;transform:translate(-50%,-50%);z-index:4}
+.clock-hand{position:absolute;left:50%;top:50%;width:37%;height:4px;background:linear-gradient(90deg,#fff,#8067ff);border-radius:10px;transform-origin:0 50%;transform:rotate(-90deg);z-index:7;box-shadow:0 0 15px #8067ff}
+.clock-pin{position:absolute;left:50%;top:50%;width:17px;height:17px;border-radius:50%;background:#fff;transform:translate(-50%,-50%);z-index:8;box-shadow:0 0 18px #8067ff}
+.clock-center{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:145px;height:145px;border-radius:50%;background:#0d1929dd;border:1px solid #304360;z-index:5;display:grid;place-items:center}
+.clock-center:after{content:"24H";font-size:20px;font-weight:800;color:#dce4f2}
+.clock-block{position:absolute;border-radius:50%;transform:translate(-50%,-50%);width:46px;height:46px;display:grid;place-items:center;font-size:22px;z-index:6;box-shadow:0 0 22px #0009,0 0 10px currentColor;border:2px solid #0a1220}
+.clock-caption{text-align:center}.clock-caption strong{display:block;font-size:18px}.clock-caption span{display:block;color:var(--muted);font-size:13px;margin-top:5px;max-width:420px}
+.clock-legend{width:190px;display:flex;flex-direction:column;gap:8px;max-height:400px;overflow:auto}
+.legend-item{display:flex;align-items:center;gap:9px;color:#bfc9d8;font-size:13px;padding:7px 8px;border-radius:8px}
+.legend-item.active{background:#17263b;color:#fff}
+.timeline{padding:17px;margin-top:18px}.timeline-head{display:flex;justify-content:space-between;margin-bottom:12px}.timeline-head span{color:var(--muted);font-size:12px}
+.hour-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:7px}.hour{min-height:65px;border:1px solid #20314a;background:#0b1625;border-radius:9px;padding:8px;cursor:pointer;transition:.18s;position:relative;overflow:hidden}.hour:hover{transform:translateY(-2px);border-color:#52688b}.hour.empty{color:#607087}.hour.filled{background:linear-gradient(135deg,color-mix(in srgb,var(--c) 18%,#0b1625),#0b1625);border-color:color-mix(in srgb,var(--c) 55%,#20314a)}.hour-time{font-size:10px;color:#78879c;font-weight:700}.hour-name{margin-top:8px;font-size:12px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.hour-icon{font-size:16px;position:absolute;right:7px;bottom:7px}.hour-xp{position:absolute;bottom:7px;left:8px;font-size:8px;color:var(--c);font-weight:700}
+#completionModal{position:fixed;inset:0;background:#020710cc;backdrop-filter:blur(10px);display:none;align-items:center;justify-content:center;z-index:100}.modal{width:min(510px,90vw);padding:34px;border-radius:20px;background:linear-gradient(160deg,#15243b,#091321);border:1px solid #445a7c;box-shadow:0 30px 100px #000b;text-align:center;animation:pop .35s ease}.trophy{font-size:64px;filter:drop-shadow(0 0 20px #ffd85c)}.modal h2{font-size:30px;margin:8px 0}.modal p{color:var(--muted);margin:0 0 22px}.score{font-size:54px;font-weight:900;background:linear-gradient(90deg,#8067ff,#43dc9a);color:transparent;background-clip:text}.score-label{color:#8f9db3;font-size:12px;text-transform:uppercase;letter-spacing:1.5px}.score-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin:24px 0}.score-box{padding:13px;background:#0b1728;border:1px solid #21334d;border-radius:10px}.score-box strong{display:block;font-size:19px}.score-box span{font-size:10px;color:var(--muted)}@keyframes pop{from{transform:scale(.8);opacity:0}to{transform:scale(1);opacity:1}}
+
+@media(max-width:900px){.app{grid-template-columns:1fr}.sidebar{display:none}.main{padding:20px}.clock-card{flex-direction:column}.clock-legend{width:100%;max-height:140px;display:grid;grid-template-columns:repeat(2,1fr)}}
+@media(max-width:600px){.main{padding:14px}.top,.hero{align-items:flex-start;flex-direction:column}.actions{width:100%}.actions .btn{flex:1}.hour-grid{grid-template-columns:repeat(2,1fr)}.hour{min-height:86px}.stats{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="sidebar">
+  <div class="logo"><div class="logo-mark">☼</div><div><h1>Religion</h1><small>Viva com propósito</small></div></div>
+  <div class="nav"></div>
+  <div class="activity-title">Escolha uma atividade</div>
+  <div id="activities"></div>
+</aside>
+
+<main class="main">
+  <header class="top">
+    <div class="hello"><span class="sun">☼</span><div><h2>Bom dia, focado!</h2><p id="date"></p></div></div>
+    <div class="actions"><button class="btn" id="clear">↺ Limpar</button><button class="btn primary" id="finish">✓ Finalizar rotina</button></div>
+  </header>
+
+  <section class="hero">
+    <div><h3>Monte sua rotina</h3><p>Organize as 24 horas do seu dia de um jeito simples e gamificado.</p></div>
+    <div class="total"><strong id="total">0 / 24h</strong><span>horas planejadas</span></div>
+  </section>
+
+  <div class="card tip"><div class="tip-icon">💡</div><div><strong>Cada hora conta.</strong><span> Escolha uma atividade e clique nas horas abaixo para montar seu dia.</span></div></div>
+
+  <div class="card selected-info">
+    <div><span class="big">Atividade selecionada: </span><span id="selectedName">Dormir</span></div>
+    <div class="hint">Clique em uma hora para adicionar • clique novamente para remover</div>
+  </div>
+
+  
+<section class="card clock-card">
+  <div class="clock-area">
+    <div class="clock" id="clock">
+      <div class="clock-face" id="clockFace"></div>
+      <div class="clock-center"></div>
+      <div class="clock-hand" id="clockHand"></div>
+      <div class="clock-pin"></div>
+    </div>
+    <div class="clock-caption">
+      <strong>Seu dia, sua escolha.</strong>
+      <span>Clique em uma hora do relógio para atribuir a atividade selecionada.</span>
+    </div>
+  </div>
+  <div class="clock-legend" id="legend"></div>
+</section>
+
+<section class="card timeline">
+  <div class="timeline-head">
+    <strong>24 horas do dia</strong>
+    <span>Clique em uma hora para adicionar ou remover a atividade.</span>
+  </div>
+  <div id="grid" class="hour-grid"></div>
+</section>
+
+<div class="stats">
+  <div class="card stat"><span>HORAS PRODUTIVAS</span><strong id="productiveHours">0h</strong></div>
+  <div class="card stat"><span>HORAS PLANEJADAS</span><strong id="plannedHours">0h</strong></div>
+  <div class="card stat"><span>HORAS LIVRES</span><strong id="freeHours">24h</strong></div>
+</div>
+<div class="card productivity-card">
+  <div class="productivity-head">
+    <div>
+      <span class="productivity-label">SEU DIA PRODUTIVO</span>
+      <strong id="productivityText">0 horas produtivas</strong>
+    </div>
+    <span id="productivityPercent">0%</span>
+  </div>
+  <div class="bar"><i id="productivityBar"></i></div>
+  <small>Consideramos produtivas atividades como estudar, ler, computador e outras tarefas de produtividade.</small>
+</div>
+</main>
+</div>
+
+<div id="completionModal">
+  <div class="modal">
+    <div class="trophy">🏆</div>
+    <h2>Rotina concluída!</h2>
+    <p>Você organizou todas as 24 horas do seu dia. Excelente trabalho!</p>
+    <div class="score" id="finalScore">240 XP</div>
+    <div class="score-label">Pontuação total</div>
+    <div class="score-grid"><div class="score-box"><strong id="finalHours">24h</strong><span>HORAS PLANEJADAS</span></div><div class="score-box"><strong id="finalProductiveHours">0h</strong><span>HORAS PRODUTIVAS</span></div><div class="score-box"><strong id="finalPercent">100%</strong><span>ROTINA COMPLETA</span></div></div><button class="btn primary" id="closeModal">Continuar</button>
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const activities = [
+ {id:'sleep',name:'Dormir',icon:'☾',color:'#8067ff',type:'rest',xp:12},
+ {id:'study',name:'Estudar',icon:'🎓',color:'#39a0ff',type:'productive',xp:18},
+ {id:'read',name:'Ler',icon:'📖',color:'#36c5c8',type:'productive',xp:16},
+ {id:'exercise',name:'Exercitar',icon:'🏃',color:'#48d67d',type:'health',xp:20},
+ {id:'game',name:'Jogar',icon:'🎮',color:'#a96cff',type:'leisure',xp:5},
+ {id:'social',name:'Redes sociais',icon:'📱',color:'#ff4f8b',type:'leisure',xp:3},
+ {id:'tv',name:'TV / séries',icon:'📺',color:'#ff9e35',type:'leisure',xp:4},
+ {id:'computer',name:'Computador',icon:'💻',color:'#52b7ff',type:'productive',xp:14},
+ {id:'relax',name:'Relaxar',icon:'🧘',color:'#f1bf35',type:'rest',xp:10},
+ {id:'walk',name:'Caminhar',icon:'🚶',color:'#35d27b',type:'health',xp:18},
+ {id:'family',name:'Família / amigos',icon:'👨‍👩‍👧',color:'#e55cae',type:'social',xp:15},
+ {id:'meal',name:'Refeições',icon:'🍽️',color:'#f07831',type:'personal',xp:12},
+ {id:'care',name:'Cuidados pessoais',icon:'🛁',color:'#54bce8',type:'personal',xp:13},
+ {id:'outside',name:'Tempo ao ar livre',icon:'🌳',color:'#61c84d',type:'health',xp:17},
+ {id:'hobby',name:'Hobby',icon:'🎨',color:'#bf6df2',type:'leisure',xp:9},
+ {id:'music',name:'Ouvir música',icon:'🎵',color:'#f15aa8',type:'leisure',xp:7}
+];
+
+let selected='sleep';
+let schedule=JSON.parse(localStorage.getItem('religionSchedule')||'{}');
+
+const $=id=>document.getElementById(id);
+$('date').textContent=new Intl.DateTimeFormat('pt-BR',{weekday:'long',day:'2-digit',month:'long'}).format(new Date());
+
+function renderActivities(){
+  $('activities').innerHTML=activities.map(a=>`
+    <button class="activity ${a.id===selected?'selected':''}" style="--c:${a.color}" data-id="${a.id}">
+      <span class="dot"></span>${a.icon} ${a.name}
+    </button>`).join('');
+  document.querySelectorAll('.activity').forEach(b=>b.onclick=()=>{
+    selected=b.dataset.id;
+    $('selectedName').textContent=activities.find(a=>a.id===selected).name;
+    renderActivities(); renderLegend();
+  });
+}
+function renderGrid(){
+  $('grid').innerHTML=Array.from({length:24},(_,h)=>{
+    const a=activities.find(x=>x.id===schedule[h]);
+    return `<div class="hour ${a?'filled xp':'empty'}" ${a?`style="--c:${a.color}"`:''} data-hour="${h}" title="${a ? `+${a.xp} XP — ${a.name}` : 'Adicionar atividade'}">
+      <div class="hour-time">${String(h).padStart(2,'0')}:00</div>
+      ${a?`<div class="hour-name">${a.name}</div><div class="hour-icon">${a.icon}</div><div class="hour-xp">+${a.xp} XP</div>`:'<div class="hour-name">＋ Adicionar</div>'}
+    </div>`;
+  }).join('');
+  document.querySelectorAll('.hour').forEach(el=>el.onclick=()=>assignHour(el.dataset.hour));
+  renderClock();
+  updateStats();
+}
+function assignHour(h){
+  if(schedule[h]===selected){delete schedule[h]; toast('Hora removida.')}
+  else {schedule[h]=selected; const a=activities.find(x=>x.id===selected); toast(`Hora adicionada! +${a.xp} XP ⚡`)}
+  save(); renderGrid();
+}
+function renderClock(){
+  const face=$('clockFace');
+  let marks='';
+  for(let h=0;h<24;h++){
+    const angle=(h/24)*360-90;
+    const rad=angle*Math.PI/180;
+    const r=46;
+    const x=50+Math.cos(rad)*r, y=50+Math.sin(rad)*r;
+    marks+=`<div class="clock-hour-dot" style="left:${x}%;top:${y}%"></div>`;
+    const a=activities.find(x=>x.id===schedule[h]);
+    if(a){
+      marks+=`<div class="clock-block" data-hour="${h}" title="${h}:00 — ${a.name}" style="left:${50+Math.cos(rad)*34}%;top:${50+Math.sin(rad)*34}%;background:${a.color}">${a.icon}</div>`;
+    }
+  }
+  face.innerHTML=marks;
+  for(let h=0;h<24;h++){
+    const angle=(h/24)*360-90;
+    face.innerHTML+=`<div class="clock-segment" data-hour="${h}" style="transform:rotate(${angle}deg)"><span class="seg-label">${String(h).padStart(2,'0')}</span></div>`;
+  }
+  face.querySelectorAll('.clock-hour-dot').forEach((dot,h)=>{
+    dot.style.background=schedule[h]?activities.find(a=>a.id===schedule[h]).color:'#607087';
+  });
+  face.querySelectorAll('.clock-segment').forEach(seg=>{
+    seg.onclick=(e)=>{e.stopPropagation();assignHour(seg.dataset.hour)};
+  });
+  face.querySelectorAll('.clock-block').forEach(b=>b.onclick=(e)=>{e.stopPropagation();assignHour(b.dataset.hour)});
+  $('clock').onclick=(e)=>{
+    if(e.target.classList.contains('clock-block')) return;
+    const rect=$('clock').getBoundingClientRect();
+    const x=e.clientX-(rect.left+rect.width/2), y=e.clientY-(rect.top+rect.height/2);
+    let deg=Math.atan2(y,x)*180/Math.PI+90; if(deg<0)deg+=360;
+    const h=Math.round((deg/360)*24)%24;
+    assignHour(h);
+  };
+  const now=new Date();
+  const current=now.getHours()+now.getMinutes()/60;
+  $('clockHand').style.transform=`rotate(${current/24*360-90}deg)`;
+}
+
+function renderLegend(){
+  $('legend').innerHTML=activities.map(a=>`<div class="legend-item ${a.id===selected?'active':''}" data-legend="${a.id}"><span class="dot" style="--c:${a.color}"></span>${a.icon} ${a.name}</div>`).join('');
+}
+
+function save(){localStorage.setItem('religionSchedule',JSON.stringify(schedule))}
+
+function updateStats(){
+  const n=Object.keys(schedule).length;
+  const productiveIds=activities.filter(a=>a.type==='productive').map(a=>a.id);
+  const productive=Object.values(schedule).filter(id=>productiveIds.includes(id)).length;
+  const productivityPercent=Math.round((productive/24)*100);
+
+  $('total').textContent=`${n} / 24h`;
+  $('plannedHours').textContent=`${n}h`;
+  $('freeHours').textContent=`${24-n}h`;
+  $('progressPercent').textContent=`${Math.round((n/24)*100)}%`;
+  $('productiveHours').textContent=`${productive}h`;
+  $('productivityText').textContent=`${productive} ${productive===1?'hora':'horas'} produtivas`;
+  $('productivityPercent').textContent=`${productivityPercent}%`;
+  $('productivityBar').style.width=`${productivityPercent}%`;
+}
+
+function toast(msg){
+  $('toast').textContent=msg;$('toast').classList.add('show');
+  clearTimeout(window.tt);window.tt=setTimeout(()=>$('toast').classList.remove('show'),1600);
+}
+$('clear').onclick=()=>{if(confirm('Limpar todas as 24 horas?')){schedule={};save();renderGrid();toast('Rotina reiniciada.')}};
+$('finish').onclick=()=>{
+  const n=Object.keys(schedule).length;
+  if(n<24){ toast(`Ainda faltam ${24-n}h para completar o dia.`); return; }
+  const totalXp=Object.values(schedule).reduce((sum,id)=>sum+(activities.find(a=>a.id===id)?.xp||0),0);
+  const productiveIds=activities.filter(a=>a.type==='productive').map(a=>a.id);
+  const productive=Object.values(schedule).filter(id=>productiveIds.includes(id)).length;
+  $('finalScore').textContent=totalXp+' XP';
+  $('finalHours').textContent=n+'h';
+  $('finalProductiveHours').textContent=productive+'h';
+  $('finalPercent').textContent='100%';
+  $('completionModal').style.display='flex';
+};
+$('closeModal').onclick=()=>{$('completionModal').style.display='none'};
+$('completionModal').onclick=(e)=>{if(e.target.id==='completionModal') $('completionModal').style.display='none'};
+renderActivities();renderLegend();renderGrid();
+</script>
+</body>
+</html>
