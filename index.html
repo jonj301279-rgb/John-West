@@ -181,9 +181,9 @@ textarea{min-height:90px;resize:vertical}
 
 <div class="overlay" id="adminOverlay">
  <div class="modal">
-  <div class="modal-head"><div><div class="small">PAINEL RESTRITO</div><h2>Administrador</h2></div><button class="close" data-close="adminOverlay">FECHAR</button></div>
+  <div class="modal-head"><div><div class="small">PAINEL</div><h2>Administrador</h2></div><button class="close" data-close="adminOverlay">FECHAR</button></div>
   <div id="loginBox">
-    <p class="small">Somente o administrador pode adicionar, editar ou excluir músicas. O PIN protege a interface neste navegador. Para segurança real em um site público, seria necessário um backend.</p>
+    <p class="small">Modo administrador local. O PIN abaixo protege apenas a interface neste navegador; para segurança real seria necessário um backend.</p>
     <form id="loginForm"><label>PIN de administrador<input id="pin" type="password" autocomplete="off" placeholder="Digite o PIN"></label><button class="primary">ENTRAR</button></form>
   </div>
   <div id="adminPanel" class="hidden">
@@ -255,11 +255,7 @@ textarea{min-height:90px;resize:vertical}
 <script>
 const SUPABASE_URL = "https://suvwoaqhiyidmyubekbq.supabase.co";
 const SUPABASE_KEY = "sb_publishable_QZyL_uzkX0iGitgQDf4UXA_HpG1lJU8";
-const SUPABASE_HEADERS = {
-  "apikey": SUPABASE_KEY,
-  "Authorization": `Bearer ${SUPABASE_KEY}`,
-  "Content-Type": "application/json"
-};
+const SUPABASE_HEADERS = {"apikey": SUPABASE_KEY, "Content-Type": "application/json"};
 </script>
 <script>
 const ADMIN_PIN = "johndosovão";
@@ -354,44 +350,29 @@ async function remoteLoad(){
       fetch(`${SUPABASE_URL}/rest/v1/albums?select=*&order=date.desc.nullslast,id.desc`,{headers:SUPABASE_HEADERS}),
       fetch(`${SUPABASE_URL}/rest/v1/songs?select=*&order=date.desc.nullslast,id.desc`,{headers:SUPABASE_HEADERS})
     ]);
-    if(!ar.ok||!sr.ok) throw new Error("Falha ao ler o Supabase");
+    if(!ar.ok||!sr.ok) throw new Error(`HTTP ${ar.status}/${sr.status}`);
     const albums=await ar.json(), songs=await sr.json();
     if(!albums.length){db=structuredClone(example);renderAll();return;}
     db={albums:albums.map(a=>({id:String(a.id),name:a.name||"",date:a.date||"",cover:a.cover||"",desc:a.description||"",playlistUrl:a.playlist_url||"",songs:[]}))};
     const byId=new Map(db.albums.map(a=>[String(a.id),a]));
     songs.forEach(s=>{const a=byId.get(String(s.album_id));if(a)a.songs.push({id:String(s.id),name:s.name||"",date:s.date||"",url:s.youtube_url||"",cover:s.cover||"",desc:s.description||""})});
     renderAll();
-  }catch(err){
-    console.error(err);
-    const cached=JSON.parse(localStorage.getItem(KEY)||"null");
-    db=cached?.albums?cached:structuredClone(example);
-    renderAll();
-    alert("Não foi possível carregar os dados online. Verifique as tabelas e as políticas do Supabase.");
-  }
+  }catch(e){console.error(e);renderAll();} 
 }
-function load(){
-  try{const d=JSON.parse(localStorage.getItem(KEY));return d?.albums?d:structuredClone(example)}
-  catch(e){return structuredClone(example)}
-}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));return d?.albums?d:structuredClone(example)}catch(e){return structuredClone(example)}}
 async function save(){
   localStorage.setItem(KEY,JSON.stringify(db));
   try{
-    const oldA=await fetch(`${SUPABASE_URL}/rest/v1/albums?select=id`,{headers:SUPABASE_HEADERS}).then(r=>r.json());
-    const oldS=await fetch(`${SUPABASE_URL}/rest/v1/songs?select=id`,{headers:SUPABASE_HEADERS}).then(r=>r.json());
-    const aIds=new Set(db.albums.map(a=>String(a.id))),sIds=new Set(allSongs().map(s=>String(s.id)));
-    for(const a of oldA)if(!aIds.has(String(a.id)))await fetch(`${SUPABASE_URL}/rest/v1/albums?id=eq.${encodeURIComponent(a.id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
-    for(const s of oldS)if(!sIds.has(String(s.id)))await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(s.id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/albums?select=id`,{headers:SUPABASE_HEADERS}); if(!r.ok)throw new Error(await r.text());
     for(const a of db.albums){
-      const r=await fetch(`${SUPABASE_URL}/rest/v1/albums`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify({id:a.id,name:a.name,date:a.date||null,cover:a.cover||"",description:a.desc||"",playlist_url:a.playlistUrl||""})});
-      if(!r.ok)throw new Error("Falha ao salvar álbum");
-      for(const s of a.songs){
-        const r2=await fetch(`${SUPABASE_URL}/rest/v1/songs`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates"},body:JSON.stringify({id:s.id,album_id:a.id,name:s.name,date:s.date||null,youtube_url:s.url||"",cover:s.cover||"",description:s.desc||""})});
-        if(!r2.ok)throw new Error("Falha ao salvar música");
-      }
+      let x=await fetch(`${SUPABASE_URL}/rest/v1/albums`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:a.id,name:a.name,date:a.date||null,cover:a.cover||"",description:a.desc||"",playlist_url:a.playlistUrl||""})});
+      if(!x.ok)throw new Error(await x.text());
+      for(const s of a.songs){x=await fetch(`${SUPABASE_URL}/rest/v1/songs`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:s.id,album_id:a.id,name:s.name,date:s.date||null,youtube_url:s.url||"",cover:s.cover||"",description:s.desc||""})});if(!x.ok)throw new Error(await x.text());}
     }
     renderAll();renderAdmin();
-  }catch(err){console.error(err);alert("Não foi possível sincronizar com o Supabase.")}
+  }catch(e){console.error(e);alert("Erro ao sincronizar com o Supabase: "+e.message)}
 }
+
 function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
 function cover(src, fallback="♫"){
  return src ? `<img src="${src}" alt="">` : `<div class="placeholder">${fallback}</div>`;
@@ -538,6 +519,7 @@ function exportData(){
  const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
  a.href=url;a.download="john-parodias-backup.json";a.click();URL.revokeObjectURL(url);
 }
+remoteLoad();
 document.querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView({behavior:"smooth"}));
 document.getElementById("adminBtn").onclick=()=>{open("adminOverlay");document.getElementById("loginBox").classList.toggle("hidden",admin);document.getElementById("adminPanel").classList.toggle("hidden",!admin);if(admin)renderAdmin()};
 document.getElementById("loginForm").onsubmit=e=>{e.preventDefault();if(document.getElementById("pin").value===ADMIN_PIN){admin=true;document.getElementById("loginBox").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin()}else alert("PIN incorreto.")};
@@ -552,7 +534,6 @@ document.getElementById("resetBtn").onclick=()=>{if(confirm("Restaurar os exempl
 document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>close(b.dataset.close));
 document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.style.display="none"}));
 renderAll();
-remoteLoad();
 hydrateVideoThumbs();
 </script>
 </body>
