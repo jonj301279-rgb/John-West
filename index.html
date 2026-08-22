@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>JOHN // PARÓDIAS</title>
+<meta name="description" content="Catálogo de paródias musicais de John — tudo feito com IA e para fins de paródia.">
+<style>
+:root{
+  --bg:#090807; --panel:#15110d; --panel2:#211810; --wood:#4a2818;
+  --gold:#d6aa24; --gold2:#f0d36b; --cream:#f4e9cf; --muted:#a99b82;
+  --line:rgba(214,170,36,.22); --shadow:0 18px 50px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;background:
+  radial-gradient(circle at 50% 10%,rgba(214,170,36,.10),transparent 25%),
+  linear-gradient(90deg,#050505 0,#120c08 14%,#0a0806 50%,#120c08 86%,#050505 100%);
+  color:var(--cream);font-family:Georgia,"Times New Roman",serif;min-height:100vh;
+}
+button,input,textarea,select{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+.topbar{
+  position:sticky;top:0;z-index:50;display:flex;align-items:center;justify-content:space-between;
+  padding:14px 5vw;background:rgba(5,5,5,.92);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line)
+}
+.logo{font-weight:900;letter-spacing:.16em;color:var(--gold2);font-size:18px}
+.nav{display:flex;gap:8px;flex-wrap:wrap}
+.nav button,.nav a{
+  border:1px solid transparent;background:transparent;color:var(--muted);padding:9px 12px;border-radius:4px
+}
+.nav button:hover,.nav a:hover,.nav .active{color:var(--gold2);border-color:var(--line);background:rgba(214,170,36,.05)}
+.hero{
+  min-height:70vh;display:grid;place-items:center;position:relative;overflow:hidden;
+  border-bottom:1px solid var(--line);
+  background:
+   radial-gradient(ellipse at 50% 72%,rgba(255,240,190,.38) 0 3%,rgba(255,230,160,.14) 8%,transparent 25%),
+   linear-gradient(180deg,rgba(0,0,0,.86),rgba(0,0,0,.38) 52%,rgba(0,0,0,.95)),
+   repeating-linear-gradient(90deg,#2d160d 0 7%,#3e2114 7% 13%,#27130b 13% 18%);
+}
+.hero:before,.hero:after{
+  content:"";position:absolute;inset:4% 18%;border:12px solid #28160d;
+  box-shadow:inset 0 0 0 3px rgba(218,176,85,.18),0 0 80px #000;pointer-events:none
+}
+.hero:after{inset:9% 23%;border-width:7px;border-color:#5b311b}
+.hero-inner{position:relative;z-index:2;text-align:center;max-width:900px;padding:70px 20px}
+.kicker{letter-spacing:.42em;color:var(--gold);font-size:12px;text-transform:uppercase}
+h1{font-size:clamp(58px,12vw,150px);line-height:.8;margin:24px 0 18px;color:#d7ad29;
+ text-shadow:0 3px 0 #5b3b0c,0 14px 40px #000;letter-spacing:-.06em}
+.subtitle{font-size:clamp(15px,2vw,22px);color:#e9dcc0;letter-spacing:.12em}
+.hero-note{margin:30px auto 0;max-width:560px;color:var(--muted);font-family:Arial,sans-serif;font-size:13px;line-height:1.7}
+.cta{
+ display:inline-flex;margin-top:28px;padding:13px 22px;border:1px solid var(--gold);color:#0b0906;
+ background:linear-gradient(#f1d36b,#b9820d);font-weight:900;letter-spacing:.08em
+}
+.section{max-width:1180px;margin:auto;padding:72px 5vw}
+.section-head{display:flex;justify-content:space-between;align-items:end;gap:20px;margin-bottom:28px}
+.section h2{font-size:38px;margin:0;color:var(--gold2);letter-spacing:.02em}
+.section p.lead{color:var(--muted);margin:8px 0 0;font-family:Arial,sans-serif}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:22px}
+.card{
+ background:linear-gradient(145deg,rgba(62,34,20,.78),rgba(16,12,9,.98));border:1px solid var(--line);
+ padding:12px;box-shadow:var(--shadow);transition:.25s;position:relative;overflow:hidden
+}
+.card:hover{transform:translateY(-4px);border-color:rgba(214,170,36,.55)}
+.cover{aspect-ratio:1;border-radius:2px;overflow:hidden;background:#20140d;display:grid;place-items:center}
+.cover img{width:100%;height:100%;object-fit:cover}
+.placeholder{font-size:42px;color:#7b5a24}
+.card h3{margin:13px 2px 5px;font-size:20px}
+.card .meta{color:var(--muted);font:12px Arial,sans-serif}
+.card .open{margin-top:14px;width:100%;padding:10px;border:1px solid var(--line);background:#0d0a08;color:var(--gold2)}
+.song-list{display:grid;gap:10px}
+.song{
+ display:grid;grid-template-columns:62px 1fr auto;gap:13px;align-items:center;
+ padding:10px;border:1px solid rgba(214,170,36,.12);background:rgba(28,18,12,.72)
+}
+.song-cover{width:62px;height:62px;overflow:hidden;background:#21150e}
+.song-cover img{width:100%;height:100%;object-fit:cover}
+.song-title{font-weight:bold;font-size:17px}.song-album{color:var(--muted);font:12px Arial,sans-serif;margin-top:4px}
+.play{border:1px solid var(--gold);background:transparent;color:var(--gold2);padding:8px 11px}
+.empty{padding:35px;border:1px dashed var(--line);text-align:center;color:var(--muted)}
+.notice{
+ background:linear-gradient(145deg,#1e140d,#0b0907);border:1px solid var(--line);padding:35px;
+ box-shadow:var(--shadow);line-height:1.8
+}
+.notice strong{color:var(--gold2)}
+.footer{border-top:1px solid var(--line);padding:30px 5vw;text-align:center;color:#776b59;font:12px Arial,sans-serif}
+.overlay{
+ position:fixed;inset:0;z-index:100;background:rgba(0,0,0,.82);display:none;align-items:center;justify-content:center;padding:20px
+}
+.modal{width:min(920px,100%);max-height:90vh;overflow:auto;background:#120d09;border:1px solid var(--gold);
+ box-shadow:0 30px 100px #000;padding:25px}
+.modal-head{display:flex;justify-content:space-between;gap:15px;align-items:center}
+.close{border:1px solid var(--line);background:transparent;color:var(--gold2);padding:8px 12px}
+form{display:grid;gap:14px}.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+label{font:12px Arial,sans-serif;color:var(--muted);display:grid;gap:6px}
+input,textarea,select{width:100%;padding:11px;background:#090706;color:var(--cream);border:1px solid #49321e;outline:none}
+input:focus,textarea:focus{border-color:var(--gold)}
+textarea{min-height:90px;resize:vertical}
+.form-actions{display:flex;gap:10px;flex-wrap:wrap}
+.primary,.danger,.secondary{padding:11px 15px;border:1px solid var(--gold)}
+.primary{background:var(--gold);color:#0b0805;font-weight:bold}.secondary{background:transparent;color:var(--gold2)}
+.danger{border-color:#7f352a;background:transparent;color:#e29b8f}
+.admin-tools{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.hidden{display:none!important}
+.admin-table{width:100%;border-collapse:collapse;font-family:Arial,sans-serif;font-size:13px}
+.admin-table th,.admin-table td{padding:10px;border-bottom:1px solid rgba(214,170,36,.12);text-align:left;vertical-align:top}
+.admin-table th{color:var(--gold2)}
+.small{font:11px Arial,sans-serif;color:var(--muted)}
+@media(max-width:700px){
+ .nav{display:none}.hero{min-height:62vh}.hero:before{inset:5% 7%;border-width:7px}.hero:after{inset:10% 12%}
+ .form-grid{grid-template-columns:1fr}.song{grid-template-columns:50px 1fr}.song .play{grid-column:2;justify-self:start}
+ .section{padding:50px 5vw}
+}
+</style>
+</head>
+<body>
+<header class="topbar">
+  <div class="logo">JOHN // PARÓDIAS</div>
+  <nav class="nav">
+    <button data-scroll="albuns">Álbuns</button>
+    <button data-scroll="recentes">Recentes</button>
+    <button data-scroll="recomendacoes">Aleatórias</button>
+    <button data-scroll="sobre">Sobre</button>
+    <button id="adminBtn">Administrador</button>
+  </nav>
+</header>
+
+<section class="hero">
+  <div class="hero-inner">
+    <div class="kicker">arquivo oficial de paródias</div>
+    <h1>JOHN</h1>
+    <div class="subtitle">LATE REGISTRATION // EARLY PARODY</div>
+    <p class="hero-note">Um catálogo feito para reunir as paródias, capas e músicas do projeto. Estética inspirada em capas clássicas, com madeira escura, dourado e luz dramática.</p>
+    <a class="cta" href="#albuns">ENTRAR NO ARQUIVO</a>
+  </div>
+</section>
+
+<main>
+<section class="section" id="albuns">
+  <div class="section-head"><div><h2>Álbuns</h2><p class="lead">Cada projeto fica separado em sua própria página.</p></div></div>
+  <div id="albumGrid" class="grid"></div>
+</section>
+
+<section class="section" id="recentes">
+  <div class="section-head"><div><h2>Mais recentes</h2><p class="lead">As faixas com data de publicação mais recente no YouTube.</p></div></div>
+  <div id="recentSongs" class="song-list"></div>
+</section>
+
+<section class="section" id="recomendacoes">
+  <div class="section-head"><div><h2>Escolha aleatória</h2><p class="lead">Uma seleção embaralhada das músicas do arquivo.</p></div><button class="secondary" id="shuffleBtn">EMBARALHAR</button></div>
+  <div id="randomSongs" class="song-list"></div>
+</section>
+
+<section class="section" id="sobre">
+  <div class="section-head"><div><h2>Sobre o projeto</h2></div></div>
+  <div class="notice">
+    <strong>AVISO DE PARÓDIA</strong><br><br>
+    Este site reúne obras criadas como <strong>paródias e experimentos com inteligência artificial</strong>.
+    O conteúdo é feito com finalidade humorística, criativa e de entretenimento. Não representa lançamentos oficiais,
+    nem deve ser confundido com obras, artistas, gravadoras ou canais oficiais.
+    <br><br>
+    <strong>Importante:</strong> nomes, imagens, personagens, músicas ou referências de terceiros podem aparecer
+    apenas no contexto da paródia. Respeite os direitos dos respectivos titulares e as regras das plataformas.
+  </div>
+</section>
+</main>
+
+<footer class="footer">JOHN // PARÓDIAS — projeto independente • feito com IA • conteúdo de paródia</footer>
+
+<div class="overlay" id="albumOverlay">
+  <div class="modal">
+    <div class="modal-head"><div><div class="small">ÁLBUM</div><h2 id="albumModalTitle"></h2></div><button class="close" data-close="albumOverlay">FECHAR</button></div>
+    <div id="albumModalMeta" class="small" style="margin-bottom:20px"></div>
+    <div id="albumModalSongs" class="song-list"></div>
+  </div>
+</div>
+
+<div class="overlay" id="adminOverlay">
+ <div class="modal">
+  <div class="modal-head"><div><div class="small">PAINEL</div><h2>Administrador</h2></div><button class="close" data-close="adminOverlay">FECHAR</button></div>
+  <div id="loginBox">
+    <p class="small">Modo administrador local. O PIN abaixo protege apenas a interface neste navegador; para segurança real seria necessário um backend.</p>
+    <form id="loginForm"><label>PIN de administrador<input id="pin" type="password" autocomplete="off" placeholder="Digite o PIN"></label><button class="primary">ENTRAR</button></form>
+  </div>
+  <div id="adminPanel" class="hidden">
+    <div class="admin-tools">
+      <button class="primary" id="newAlbumBtn">+ NOVO ÁLBUM</button>
+      <button class="secondary" id="exportBtn">EXPORTAR DADOS</button>
+      <label class="secondary" style="display:inline-flex;align-items:center;cursor:pointer">IMPORTAR JSON<input id="importInput" type="file" accept=".json" hidden></label>
+      <button class="danger" id="resetBtn">LIMPAR DADOS LOCAIS</button>
+    </div>
+    <div class="notice" style="padding:16px;margin-bottom:18px">
+      <strong>YouTube automático:</strong> para o site conseguir buscar a capa real das playlists e
+      sincronizar títulos/datas, informe uma chave da <strong>YouTube Data API v3</strong>.
+      A chave fica salva apenas neste navegador. Sem chave, as músicas ainda usam a thumbnail padrão
+      do vídeo quando o link permite identificar o ID.
+      <div class="form-grid" style="margin-top:12px">
+        <label>Chave da YouTube Data API
+          <input id="ytApiKey" type="password" placeholder="Cole sua API key aqui">
+        </label>
+        <div style="display:flex;align-items:end">
+          <button class="primary" id="saveYtKey" type="button">SALVAR CHAVE</button>
+        </div>
+      </div>
+      <div class="small" style="margin-top:8px">Para segurança, restrinja a chave no Google Cloud Console ao seu domínio quando publicar o site.</div>
+    </div>
+    <div id="adminContent"></div>
+  </div>
+ </div>
+</div>
+
+<div class="overlay" id="editorOverlay">
+ <div class="modal">
+  <div class="modal-head"><div><div class="small">EDITOR</div><h2 id="editorTitle">Novo álbum</h2></div><button class="close" data-close="editorOverlay">FECHAR</button></div>
+  <form id="albumForm">
+    <input id="editAlbumId" type="hidden">
+    <div class="form-grid">
+      <label>Nome do álbum<input id="albumName" required placeholder="Ex.: The Life of John"></label>
+      <label>Data do álbum<input id="albumDate" type="date"></label>
+    </div>
+    <label>Link da playlist do YouTube
+      <input id="albumPlaylistUrl" type="url" placeholder="https://www.youtube.com/playlist?list=...">
+      <span id="albumCoverInfo" class="small">A capa do álbum será obtida automaticamente da playlist. Você não precisa enviar imagem.</span>
+    </label>
+    <label>Descrição<textarea id="albumDesc" placeholder="Descrição do álbum"></textarea></label>
+    <div class="form-actions"><button class="primary">SALVAR ÁLBUM</button><button type="button" class="secondary" id="cancelEditor">CANCELAR</button></div>
+  </form>
+ </div>
+</div>
+
+<div class="overlay" id="songOverlay">
+ <div class="modal">
+  <div class="modal-head"><div><div class="small">FAIXA</div><h2 id="songEditorTitle">Nova música</h2></div><button class="close" data-close="songOverlay">FECHAR</button></div>
+  <form id="songForm">
+    <input id="editSongId" type="hidden"><input id="songAlbumId" type="hidden">
+    <div class="form-grid">
+      <label>Nome da música<input id="songName" required placeholder="Nome da faixa"></label>
+      <label>Data de publicação no YouTube<input id="songDate" type="date"></label>
+    </div>
+    <label>Link do YouTube<input id="songUrl" type="url" placeholder="https://www.youtube.com/watch?v=..."></label>
+    <div class="notice" style="padding:14px;margin:0">
+      A capa da música será obtida automaticamente da <strong>thumbnail do vídeo do YouTube</strong>.
+      Basta informar o link do vídeo acima.
+    </div>
+    <label>Descrição<textarea id="songDesc" placeholder="Descrição opcional"></textarea></label>
+    <div class="form-actions"><button class="primary">SALVAR MÚSICA</button><button type="button" class="secondary" id="cancelSong">CANCELAR</button></div>
+  </form>
+ </div>
+</div>
+
+<script>
+const SUPABASE_URL = "https://suvwoaqhiyidmyubekbq.supabase.co";
+const SUPABASE_KEY = "sb_publishable_QZyL_uzkX0iGitgQDf4UXA_HpG1lJU8";
+const SUPABASE_HEADERS = {"apikey": SUPABASE_KEY, "Content-Type": "application/json"};
+</script>
+<script>
+const ADMIN_PIN = "johndosovão";
+const KEY = "john_parodias_v1";
+const example = { albums: [] };
+let db = load();
+let admin = false;
+
+const YT_KEY_STORAGE = "john_parodias_youtube_key";
+
+function getYtKey(){ return localStorage.getItem(YT_KEY_STORAGE) || ""; }
+function extractVideoId(url=""){
+  try{
+    const u = new URL(url);
+    if(u.hostname.includes("youtu.be")) return u.pathname.slice(1).split(/[?&]/)[0];
+    if(u.searchParams.get("v")) return u.searchParams.get("v");
+    const m = u.pathname.match(/\/(?:shorts|embed)\/([^/?]+)/);
+    return m ? m[1] : "";
+  }catch(e){ return ""; }
+}
+function extractPlaylistId(url=""){
+  try{
+    const u = new URL(url);
+    return u.searchParams.get("list") || "";
+  }catch(e){ return ""; }
+}
+function youtubeThumb(url=""){
+  const id = extractVideoId(url);
+  return id ? `https://i.ytimg.com/vi/${encodeURIComponent(id)}/hqdefault.jpg` : "";
+}
+async function ytApi(endpoint){
+  const key=getYtKey();
+  if(!key) throw new Error("NO_KEY");
+  const r=await fetch(`https://www.googleapis.com/youtube/v3/${endpoint}&key=${encodeURIComponent(key)}`);
+  const d=await r.json();
+  if(!r.ok || d.error) throw new Error(d.error?.message || "YouTube API error");
+  return d;
+}
+async function getYoutubePublishedDate(url){
+  const videoId=extractVideoId(url);
+  if(!videoId || !getYtKey()) return "";
+  try{
+    const d=await ytApi(`videos?part=snippet&id=${encodeURIComponent(videoId)}`);
+    return d.items?.[0]?.snippet?.publishedAt?.slice(0,10) || "";
+  }catch(e){
+    console.warn("Não foi possível obter a data real do YouTube:",e);
+    return "";
+  }
+}
+async function syncAlbumFromPlaylist(albumId){
+  const a=db.albums.find(x=>x.id===albumId);
+  if(!a || !a.playlistUrl) return;
+  const pid=extractPlaylistId(a.playlistUrl);
+  if(!pid) throw new Error("Link de playlist inválido.");
+  const p=await ytApi(`playlists?part=snippet&id=${encodeURIComponent(pid)}`);
+  if(!p.items?.length) throw new Error("Playlist não encontrada.");
+  const ps=p.items[0].snippet;
+  a.name=ps.title || a.name;
+  a.desc=ps.description || a.desc || "";
+  a.cover=ps.thumbnails?.maxres?.url || ps.thumbnails?.high?.url || ps.thumbnails?.medium?.url || ps.thumbnails?.default?.url || "";
+  const items=await ytApi(`playlistItems?part=snippet,contentDetails&playlistId=${encodeURIComponent(pid)}&maxResults=50`);
+  const incoming=(items.items||[]).filter(x=>x.snippet?.resourceId?.videoId).map(x=>{
+    const vid=x.snippet.resourceId.videoId;
+    return {
+      id:"yt_"+vid,
+      name:x.snippet.title || "Sem título",
+      date:(x.contentDetails?.videoPublishedAt || x.snippet?.publishedAt || "").slice(0,10),
+      publishedAt:(x.contentDetails?.videoPublishedAt || x.snippet?.publishedAt || ""),
+      url:`https://www.youtube.com/watch?v=${vid}`,
+      cover:x.snippet.thumbnails?.maxres?.url || x.snippet.thumbnails?.high?.url || x.snippet.thumbnails?.medium?.url || youtubeThumb(`https://www.youtube.com/watch?v=${vid}`),
+      desc:x.snippet.description || ""
+    };
+  });
+  const oldById=new Map(a.songs.map(s=>[extractVideoId(s.url)||s.id,s]));
+  a.songs=incoming.map((s,index)=>({...s, ...(oldById.get(extractVideoId(s.url))||{}), id:s.id, name:s.name, date:s.date, url:s.url, cover:s.cover, desc:s.desc, sortOrder:index}));
+  save();
+}
+async function hydrateVideoData(){
+  let changed=false;
+  const all=allSongs();
+  const ids=[...new Set(all.map(s=>extractVideoId(s.url)).filter(Boolean))];
+  if(getYtKey() && ids.length){
+    try{
+      for(let i=0;i<ids.length;i+=50){
+        const batch=ids.slice(i,i+50);
+        const data=await ytApi(`videos?part=snippet&id=${batch.join(",")}`);
+        const byId=new Map((data.items||[]).map(v=>[v.id,v.snippet?.publishedAt||""]));
+        for(const a of db.albums){
+          for(const s of a.songs){
+            const vid=extractVideoId(s.url);
+            const published=vid ? byId.get(vid) : "";
+            if(published){
+              const realDate=published.slice(0,10);
+              if(s.date!==realDate || s.publishedAt!==published){s.date=realDate;s.publishedAt=published;changed=true;}
+            }
+            if(!s.cover && vid){
+              const t=youtubeThumb(s.url);
+              if(t){s.cover=t;changed=true;}
+            }
+          }
+        }
+      }
+    }catch(e){console.warn("Não foi possível atualizar as datas pelo YouTube:",e);}
+  }
+  for(const a of db.albums){
+    for(const s of a.songs){
+      if(!s.cover){const t=youtubeThumb(s.url);if(t){s.cover=t;changed=true;}}
+    }
+  }
+  if(changed){
+    localStorage.setItem(KEY,JSON.stringify(db));
+    renderAll();
+  }
+}
+
+async function removeOldExampleRecords(){
+  const exampleAlbumIds = ["a1", "a2"];
+  const exampleSongIds = ["s1", "s2", "s3"];
+  try{
+    for(const id of exampleSongIds){
+      await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+    }
+    for(const id of exampleAlbumIds){
+      await fetch(`${SUPABASE_URL}/rest/v1/songs?album_id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+      await fetch(`${SUPABASE_URL}/rest/v1/albums?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+    }
+  }catch(e){console.warn("Não foi possível limpar registros de exemplo antigos:",e);}
+}
+
+async function remoteLoad(){
+  try{
+    await removeOldExampleRecords();
+    const [ar,sr]=await Promise.all([
+      fetch(`${SUPABASE_URL}/rest/v1/albums?select=*&order=sort_order.asc,id.asc`,{headers:SUPABASE_HEADERS}),
+      fetch(`${SUPABASE_URL}/rest/v1/songs?select=*&order=album_id.asc,sort_order.asc,id.asc`,{headers:SUPABASE_HEADERS})
+    ]);
+    if(!ar.ok||!sr.ok) throw new Error(`HTTP ${ar.status}/${sr.status}`);
+    const albums=await ar.json(), songs=await sr.json();
+    if(!albums.length){db=structuredClone(example);renderAll();return;}
+    db={albums:albums.map(a=>({id:String(a.id),name:a.name||"",date:a.date||"",cover:a.cover||"",desc:a.description||"",playlistUrl:a.playlist_url||"",sortOrder:Number(a.sort_order)||0,songs:[]}))};
+    const byId=new Map(db.albums.map(a=>[String(a.id),a]));
+    songs.forEach(s=>{const a=byId.get(String(s.album_id));if(a)a.songs.push({id:String(s.id),name:s.name||"",date:s.date||"",publishedAt:s.published_at||s.date||"",url:s.youtube_url||"",cover:s.cover||"",desc:s.description||"",sortOrder:Number(s.sort_order)||0})});
+    await hydrateVideoData();
+    renderAll();
+  }catch(e){console.error(e);renderAll();} 
+}
+function load(){try{const d=JSON.parse(localStorage.getItem(KEY));return d?.albums?d:structuredClone(example)}catch(e){return structuredClone(example)}}
+async function save(){
+  localStorage.setItem(KEY,JSON.stringify(db));
+  try{
+    const r=await fetch(`${SUPABASE_URL}/rest/v1/albums?select=id`,{headers:SUPABASE_HEADERS}); if(!r.ok)throw new Error(await r.text());
+    for(const a of db.albums){
+      let x=await fetch(`${SUPABASE_URL}/rest/v1/albums`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:a.id,name:a.name,date:a.date||null,cover:a.cover||"",description:a.desc||"",playlist_url:a.playlistUrl||"",sort_order:db.albums.indexOf(a)})});
+      if(!x.ok)throw new Error(await x.text());
+      for(const s of a.songs){x=await fetch(`${SUPABASE_URL}/rest/v1/songs`,{method:"POST",headers:{...SUPABASE_HEADERS,"Prefer":"resolution=merge-duplicates,return=minimal"},body:JSON.stringify({id:s.id,album_id:a.id,name:s.name,date:s.date||null,youtube_url:s.url||"",cover:s.cover||"",description:s.desc||"",sort_order:a.songs.indexOf(s)})});if(!x.ok)throw new Error(await x.text());}
+    }
+    renderAll();renderAdmin();
+  }catch(e){console.error(e);alert("Erro ao sincronizar com o Supabase: "+e.message)}
+}
+
+function esc(s=""){return String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"}[c]))}
+function cover(src, fallback="♫"){
+ return src ? `<img src="${src}" alt="">` : `<div class="placeholder">${fallback}</div>`;
+}
+function allSongs(){
+ return db.albums.flatMap(a=>a.songs.map(s=>({...s,albumName:a.name,albumId:a.id,albumCover:a.cover})));
+}
+function renderAlbums(){
+ const el=document.getElementById("albumGrid");
+ if(!db.albums.length){el.innerHTML='<div class="empty">Nenhum álbum cadastrado ainda.</div>';return}
+ el.innerHTML=db.albums.map(a=>`
+ <article class="card">
+  <div class="cover">${cover(a.cover,"◉")}</div>
+  <h3>${esc(a.name)}</h3><div class="meta">${a.songs.length} música(s) • ${a.date||"sem data"}</div>
+  <button class="open" onclick="openAlbum('${a.id}')">ABRIR ÁLBUM</button>
+ </article>`).join("");
+}
+function songHTML(s){
+ return `<div class="song">
+  <div class="song-cover">${cover(s.cover||s.albumCover,"♫")}</div>
+  <div><div class="song-title">${esc(s.name)}</div><div class="song-album">${esc(s.albumName)} • YouTube: ${s.date||"sem data"}</div></div>
+  ${s.url ? `<a class="play" href="${esc(s.url)}" target="_blank" rel="noopener">YOUTUBE ↗</a>` : `<span class="small">SEM LINK</span>`}
+ </div>`;
+}
+function renderRecent(){
+ const songs=allSongs().sort((a,b)=>{
+   const ta=Date.parse(a.publishedAt||a.date||"")||0;
+   const tb=Date.parse(b.publishedAt||b.date||"")||0;
+   if(tb!==ta) return tb-ta;
+   return String(b.id).localeCompare(String(a.id));
+ }).slice(0,8);
+ document.getElementById("recentSongs").innerHTML=songs.length?songs.map(songHTML).join(""):'<div class="empty">Cadastre músicas para elas aparecerem aqui.</div>';
+}
+function shuffle(arr){return [...arr].sort(()=>Math.random()-.5)}
+function renderRandom(){
+ const songs=shuffle(allSongs()).slice(0,6);
+ document.getElementById("randomSongs").innerHTML=songs.length?songs.map(songHTML).join(""):'<div class="empty">Cadastre músicas para gerar recomendações.</div>';
+}
+function renderAll(){renderAlbums();renderRecent();renderRandom()}
+function openAlbum(id){
+ const a=db.albums.find(x=>x.id===id);if(!a)return;
+ document.getElementById("albumModalTitle").textContent=a.name;
+ document.getElementById("albumModalMeta").textContent=(a.date||"")+(a.desc?" • "+a.desc:"");
+ document.getElementById("albumModalSongs").innerHTML=a.songs.length?a.songs.map(s=>songHTML({...s,albumName:a.name,albumId:a.id,albumCover:a.cover})).join(""):'<div class="empty">Este álbum ainda não tem músicas.</div>';
+ document.getElementById("albumOverlay").style.display="flex";
+}
+function open(id){document.getElementById(id).style.display="flex"}
+function close(id){document.getElementById(id).style.display="none"}
+function readFile(file){
+ return new Promise((resolve,reject)=>{
+  if(!file){resolve("");return}
+  const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file);
+ });
+}
+function renderAdmin(){
+ if(!admin)return;
+ const keyInput=document.getElementById("ytApiKey");
+ if(keyInput) keyInput.value=getYtKey();
+ const el=document.getElementById("adminContent");
+ if(!db.albums.length){el.innerHTML='<div class="empty">Nenhum álbum. Clique em “NOVO ÁLBUM”.</div>';return}
+ el.innerHTML=db.albums.map((a,ai)=>`
+ <div class="card" style="margin-bottom:16px">
+  <div style="display:flex;justify-content:space-between;gap:12px;align-items:start">
+   <div><h3 style="margin-top:0">${esc(a.name)}</h3><div class="small">${a.songs.length} música(s)${a.playlistUrl?` • <a href="${esc(a.playlistUrl)}" target="_blank">playlist ↗</a>`:""}</div></div>
+   <div class="form-actions">
+    <button class="secondary" onclick="moveAlbum(${ai},-1)" ${ai===0?"disabled":""}>▲ ÁLBUM</button>
+    <button class="secondary" onclick="moveAlbum(${ai},1)" ${ai===db.albums.length-1?"disabled":""}>▼ ÁLBUM</button>
+    <button class="secondary" onclick="syncPlaylist('${a.id}')">SINCRONIZAR YOUTUBE</button><button class="secondary" onclick="editAlbum('${a.id}')">EDITAR</button><button class="danger" onclick="deleteAlbum('${a.id}')">EXCLUIR</button>
+   </div>
+  </div>
+  <button class="primary" onclick="newSong('${a.id}')">+ ADICIONAR MÚSICA</button>
+  <table class="admin-table" style="margin-top:12px"><thead><tr><th>#</th><th>Música</th><th>YouTube</th><th>Data</th><th>Ordem / Ações</th></tr></thead><tbody>
+   ${a.songs.map((s,si)=>`<tr><td>${si+1}</td><td>${esc(s.name)}</td><td>${s.url?`<a href="${esc(s.url)}" target="_blank">abrir</a>`:"—"}</td><td>${s.date||"—"}</td><td><button class="secondary" onclick="moveSong('${a.id}',${si},-1)" ${si===0?"disabled":""}>▲</button> <button class="secondary" onclick="moveSong('${a.id}',${si},1)" ${si===a.songs.length-1?"disabled":""}>▼</button> <button class="secondary" onclick="editSong('${a.id}','${s.id}')">editar</button> <button class="danger" onclick="deleteSong('${a.id}','${s.id}')">excluir</button></td></tr>`).join("")}
+  </tbody></table>
+ </div>`).join("");
+}
+function moveItem(arr,index,delta){
+ const target=index+delta;
+ if(index<0||index>=arr.length||target<0||target>=arr.length)return false;
+ [arr[index],arr[target]]=[arr[target],arr[index]];
+ return true;
+}
+async function moveAlbum(index,delta){
+ if(moveItem(db.albums,index,delta)){await save();renderAdmin();}
+}
+async function moveSong(albumId,index,delta){
+ const a=db.albums.find(x=>x.id===albumId);
+ if(a&&moveItem(a.songs,index,delta)){await save();renderAdmin();}
+}
+
+function editAlbum(id){
+ const a=db.albums.find(x=>x.id===id);if(!a)return;
+ document.getElementById("editAlbumId").value=id;document.getElementById("albumName").value=a.name;
+ document.getElementById("albumDate").value=a.date||"";document.getElementById("albumDesc").value=a.desc||"";
+ document.getElementById("albumPlaylistUrl").value=a.playlistUrl||"";
+ document.getElementById("albumCoverInfo").textContent=a.cover?"Capa atual obtida do YouTube.":"A capa será obtida da playlist ao sincronizar.";
+ document.getElementById("editorTitle").textContent="Editar álbum";open("editorOverlay");
+}
+function newAlbum(){
+ document.getElementById("albumForm").reset();document.getElementById("editAlbumId").value="";
+ document.getElementById("editorTitle").textContent="Novo álbum";document.getElementById("albumCoverInfo").textContent="Cole o link da playlist do YouTube.";
+ open("editorOverlay");
+}
+async function submitAlbum(e){
+ e.preventDefault();
+ const id=document.getElementById("editAlbumId").value;
+ const existing=id?db.albums.find(a=>a.id===id):null;
+ const playlistUrl=document.getElementById("albumPlaylistUrl").value.trim();
+ const data={
+   name:document.getElementById("albumName").value.trim(),
+   date:document.getElementById("albumDate").value,
+   desc:document.getElementById("albumDesc").value.trim(),
+   playlistUrl
+ };
+ if(existing){Object.assign(existing,data)}
+ else db.albums.push({id:"a"+Date.now(),...data,cover:"",sortOrder:db.albums.length,songs:[]});
+ save();close("editorOverlay");
+ const saved=db.albums.find(a=>a.id===(id||db.albums[0].id));
+ if(playlistUrl && getYtKey()){
+   try{await syncAlbumFromPlaylist(saved.id);alert("Álbum sincronizado com o YouTube.");}
+   catch(err){alert("Álbum salvo, mas não foi possível sincronizar: "+err.message);}
+ }else if(playlistUrl){
+   alert("Álbum salvo. Adicione uma chave da YouTube Data API no painel e clique em “SINCRONIZAR YOUTUBE”.");
+ }
+}
+async function deleteAlbum(id){
+ const a=db.albums.find(x=>x.id===id);
+ if(a&&confirm(`Excluir o álbum "${a.name}" e todas as músicas dele?`)){
+  db.albums=db.albums.filter(x=>x.id!==id);
+  try{
+   await fetch(`${SUPABASE_URL}/rest/v1/songs?album_id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+   await fetch(`${SUPABASE_URL}/rest/v1/albums?id=eq.${encodeURIComponent(id)}`,{method:"DELETE",headers:SUPABASE_HEADERS});
+  }catch(e){console.error("Erro ao excluir álbum no Supabase:",e);}
+  await save();
+ }
+}
+function newSong(albumId){
+ document.getElementById("songForm").reset();document.getElementById("editSongId").value="";
+ document.getElementById("songAlbumId").value=albumId;document.getElementById("songEditorTitle").textContent="Nova música";open("songOverlay");
+}
+function editSong(albumId,songId){
+ const a=db.albums.find(x=>x.id===albumId),s=a?.songs.find(x=>x.id===songId);if(!s)return;
+ document.getElementById("editSongId").value=s.id;document.getElementById("songAlbumId").value=albumId;
+ document.getElementById("songName").value=s.name;document.getElementById("songDate").value=s.date||"";
+ document.getElementById("songUrl").value=s.url||"";document.getElementById("songDesc").value=s.desc||"";
+ document.getElementById("songEditorTitle").textContent="Editar música";open("songOverlay");
+}
+async function submitSong(e){
+ e.preventDefault();
+ const albumId=document.getElementById("songAlbumId").value,a=db.albums.find(x=>x.id===albumId);if(!a)return;
+ const id=document.getElementById("editSongId").value,existing=id?a.songs.find(s=>s.id===id):null;
+ const url=document.getElementById("songUrl").value.trim();
+ const manualDate=document.getElementById("songDate").value;
+ const youtubeDate=await getYoutubePublishedDate(url);
+ const data={
+   name:document.getElementById("songName").value.trim(),
+   date:youtubeDate || manualDate || existing?.date || "",
+   url,
+   cover:youtubeThumb(url) || (existing?.cover||""),
+   desc:document.getElementById("songDesc").value.trim()
+ };
+ if(existing) Object.assign(existing,data);
+ else a.songs.push({id:"s"+Date.now(),...data,sortOrder:a.songs.length});
+ save();close("songOverlay");
+}
+async function syncPlaylist(id){
+  if(!getYtKey()){alert("Primeiro salve sua chave da YouTube Data API no painel.");return;}
+  try{
+    await syncAlbumFromPlaylist(id);
+    alert("Playlist sincronizada. Capa, nome e músicas foram atualizados a partir do YouTube.");
+  }catch(err){alert("Não foi possível sincronizar: "+err.message);}
+}
+async function deleteSong(aid,sid){
+ const a=db.albums.find(x=>x.id===aid);
+ if(a&&confirm("Excluir esta música?")){
+  a.songs=a.songs.filter(s=>s.id!==sid);
+  try{await fetch(`${SUPABASE_URL}/rest/v1/songs?id=eq.${encodeURIComponent(sid)}`,{method:"DELETE",headers:SUPABASE_HEADERS});}
+  catch(e){console.error("Erro ao excluir música no Supabase:",e);}
+  await save();
+ }
+}
+function exportData(){
+ const blob=new Blob([JSON.stringify(db,null,2)],{type:"application/json"}),url=URL.createObjectURL(blob),a=document.createElement("a");
+ a.href=url;a.download="john-parodias-backup.json";a.click();URL.revokeObjectURL(url);
+}
+remoteLoad();
+document.querySelectorAll("[data-scroll]").forEach(b=>b.onclick=()=>document.getElementById(b.dataset.scroll).scrollIntoView({behavior:"smooth"}));
+document.getElementById("adminBtn").onclick=()=>{open("adminOverlay");document.getElementById("loginBox").classList.toggle("hidden",admin);document.getElementById("adminPanel").classList.toggle("hidden",!admin);if(admin)renderAdmin()};
+document.getElementById("loginForm").onsubmit=e=>{e.preventDefault();if(document.getElementById("pin").value===ADMIN_PIN){admin=true;document.getElementById("loginBox").classList.add("hidden");document.getElementById("adminPanel").classList.remove("hidden");renderAdmin()}else alert("PIN incorreto.")};
+document.getElementById("newAlbumBtn").onclick=newAlbum;
+document.getElementById("albumForm").onsubmit=submitAlbum;
+document.getElementById("saveYtKey").onclick=()=>{localStorage.setItem(YT_KEY_STORAGE,document.getElementById("ytApiKey").value.trim());alert("Chave salva neste navegador.");};
+document.getElementById("songForm").onsubmit=submitSong;document.getElementById("newAlbumBtn").onclick=newAlbum;
+document.getElementById("cancelEditor").onclick=()=>close("editorOverlay");document.getElementById("cancelSong").onclick=()=>close("songOverlay");
+document.getElementById("shuffleBtn").onclick=renderRandom;document.getElementById("exportBtn").onclick=exportData;
+document.getElementById("importInput").onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const d=JSON.parse(await f.text());if(!d.albums)throw Error();db=d;save();alert("Dados importados.")}catch{alert("Arquivo JSON inválido.")}e.target.value=""};
+document.getElementById("resetBtn").onclick=()=>{if(confirm("Limpar os dados locais deste navegador? Os dados do Supabase não serão apagados.")){db=structuredClone(example);localStorage.setItem(KEY,JSON.stringify(db));renderAll();renderAdmin()}};
+document.querySelectorAll("[data-close]").forEach(b=>b.onclick=()=>close(b.dataset.close));
+document.querySelectorAll(".overlay").forEach(o=>o.addEventListener("click",e=>{if(e.target===o)o.style.display="none"}));
+renderAll();
+hydrateVideoData();
+</script>
+</body>
+</html>
